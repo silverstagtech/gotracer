@@ -33,3 +33,44 @@ func TestShow(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestShowBytes(t *testing.T) {
+	tracing := New()
+	tracing.SendBytes([]byte("One"))
+	tracing.SendByte('a')
+
+	if tracing.ShowBytes()[0][0] != []byte("One")[0] {
+		t.Log("Show did not give back the correct message.")
+		t.Fail()
+	}
+
+	if tracing.ShowBytes()[1][0] != 'a' {
+		t.Log("Show did not give back the correct message.")
+		t.Fail()
+	}
+}
+
+func TestShowInterface(t *testing.T) {
+	tracing := New()
+	tracing.SendInterface("String")
+	tracing.SendInterface([]byte("ByteSlice"))
+	tracing.SendInterface(3)
+	tracing.SendInterface(map[string]string{"map": "string"})
+
+	if tracing.ShowRaw()[2] != 3 {
+		t.Log("Show did not give back the correct message.")
+		t.Fail()
+	}
+}
+
+func TestPrinters(t *testing.T) {
+	// We can only look for panics here.
+	tracing := New()
+	tracing.SendInterface("String")
+	tracing.SendInterface([]byte("ByteSlice"))
+	tracing.SendInterface(3)
+	tracing.SendInterface(map[string]string{"mapKey": "stringValue"})
+
+	tracing.Println()
+	tracing.PrintlnT(t)
+}
